@@ -33,16 +33,3 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: PHP_VERSION=${{ matrix.php }} make ${{ matrix.deps == 'lowest' && 'install-lowest' || '' }} phpstan
-
-  test:
-    runs-on: ubuntu-latest
-    strategy: *strategy
-    steps:
-      - uses: actions/checkout@v6
-      - run: PHP_VERSION=${{ matrix.php }} make ${{ matrix.deps == 'lowest' && 'install-lowest' || '' }} test
-
-  # infect:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - run: make infect
