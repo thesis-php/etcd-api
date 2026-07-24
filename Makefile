@@ -70,14 +70,6 @@ phpstan: var vendor ## Run static analysis
 	$(RUN) phpstan analyze --memory-limit=1G $(ARGS)
 .PHONY: phpstan
 
-test: var vendor up ## Run the test suite
-	$(RUN) vendor/bin/testo $(ARGS)
-.PHONY: test
-
-infect: var vendor up ## Run mutation testing
-	$(RUN) infection --show-mutations $(ARGS)
-.PHONY: infect
-
 deps-analyze: vendor ## Check for unused/missing dependencies
 	$(RUN) composer-dependency-analyser $(ARGS)
 .PHONY: deps-analyze
@@ -99,7 +91,7 @@ composer-normalize-check: ## Check composer.json is normalized
 fix: fixer rector composer-normalize ## Fix code style and normalize composer.json
 .PHONY: fix
 
-check: fixer-check rector-check composer-validate composer-normalize-check deps-analyze phpstan test ## Run all checks
+check: fixer-check rector-check composer-validate composer-normalize-check deps-analyze phpstan ## Run all checks
 .PHONY: check
 
 rescaffold:
@@ -114,6 +106,53 @@ rescaffold:
 	  --user-email-default '$(shell git config user.email 2>/dev/null)'
 	git add --all 2>/dev/null || true
 .PHONY: rescaffold
+
+# Etcd
+
+ETCD_VERSION ?= v3.7.0
+
+.PHONY: generate clean
+
+generate: .build/proto
+	rm -rf src
+	mkdir -p src
+	docker run --rm \
+		--user $(DOCKER_USER) \
+		-v $(PWD):/workspace \
+		-w /workspace \
+		ghcr.io/thesis-php/protoc-plugin:latest \
+		-I .build/proto \
+		-I .build/proto/etcd \
+		-I .build/proto/gogo \
+		-I .build/proto/googleapis \
+		-I .build/proto/grpc-gateway \
+		--php-plugin_opt=grpc=client \
+		--php-plugin_out=src \
+		.build/proto/etcd/api/etcdserverpb/rpc.proto \
+		.build/proto/etcd/api/mvccpb/kv.proto \
+		.build/proto/etcd/api/authpb/auth.proto \
+		.build/proto/etcd/api/versionpb/version.proto \
+		.build/proto/etcd/server/etcdserver/api/v3lock/v3lockpb/v3lock.proto \
+		.build/proto/etcd/server/etcdserver/api/v3election/v3electionpb/v3election.proto
+	$(MAKE) clean
+
+.build/proto:
+	mkdir -p $@
+	git clone --depth 1 --branch $(ETCD_VERSION) https://github.com/etcd-io/etcd.git $@/etcd
+	git clone --depth 1 https://github.com/gogo/protobuf.git $@/gogo
+	git clone --depth 1 https://github.com/googleapis/googleapis.git $@/googleapis
+	git clone --depth 1 https://github.com/grpc-ecosystem/grpc-gateway.git $@/grpc-gateway
+
+clean:
+	rm -rf .build
+
+etcd:
+	docker run --rm --network host \
+	  --name etcd \
+	  quay.io/coreos/etcd:v3.7.0 \
+	  /usr/local/bin/etcd \
+	  --advertise-client-urls http://0.0.0.0:2379 \
+	  --listen-client-urls http://0.0.0.0:2379
 
 # ---
 

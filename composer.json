@@ -1,6 +1,6 @@
 {
     "name": "thesis/etcd-api",
-    "description": "Thesis Etcd Api",
+    "description": "Generated PHP client for etcd v3 gRPC API.",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -18,21 +18,29 @@
         }
     ],
     "require": {
-        "php": "^8.4"
-    },
-    "require-dev": {
-        "symfony/var-dumper": "^8.0",
-        "testo/testo": "^0.10.29"
+        "php": "^8.4",
+        "ext-bcmath": "*",
+        "amphp/amp": "^3.1",
+        "thesis/grpc-client": "^0.1.8",
+        "thesis/grpc-protocol": "^0.1.8",
+        "thesis/protobuf": "^0.1.10",
+        "thesis/protoregistry": "^0.1.2"
     },
     "autoload": {
         "psr-4": {
-            "Thesis\\Etcd\\Api\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Thesis\\Etcd\\Api\\": "tests/"
-        }
+            "Authpb\\": "src/Authpb",
+            "Etcdserverpb\\": "src/Etcdserverpb",
+            "Mvccpb\\": "src/Mvccpb",
+            "V3electionpb\\": "src/V3electionpb",
+            "V3lockpb\\": "src/V3lockpb"
+        },
+        "files": [
+            "src/Authpb/autoload.metadata.php",
+            "src/Etcdserverpb/autoload.metadata.php",
+            "src/Mvccpb/autoload.metadata.php",
+            "src/V3electionpb/autoload.metadata.php",
+            "src/V3lockpb/autoload.metadata.php"
+        ]
     },
     "config": {
         "lock": false,
