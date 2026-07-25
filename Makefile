@@ -120,6 +120,7 @@ generate: .build/proto
 		--user $(DOCKER_USER) \
 		-v $(PWD):/workspace \
 		-w /workspace \
+		--pull always \
 		ghcr.io/thesis-php/protoc-plugin:latest \
 		-I .build/proto \
 		-I .build/proto/etcd \
