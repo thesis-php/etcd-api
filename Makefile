@@ -111,9 +111,9 @@ rescaffold:
 
 ETCD_VERSION ?= v3.7.0
 
-.PHONY: generate clean
+.PHONY: compile clean
 
-generate: .build/proto
+compile: .build/proto
 	rm -rf src
 	mkdir -p src
 	docker run --rm \
