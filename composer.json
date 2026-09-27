@@ -21,8 +21,8 @@
         "php": "^8.4",
         "ext-bcmath": "*",
         "amphp/amp": "^3.1",
-        "thesis/grpc-client": "^0.2",
-        "thesis/grpc-protocol": "^0.2",
+        "thesis/grpc-client": "^0.3",
+        "thesis/grpc-protocol": "^0.3",
         "thesis/protobuf": "^0.2",
         "thesis/protoregistry": "^0.1.2"
     },
